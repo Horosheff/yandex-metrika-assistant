@@ -1,5 +1,7 @@
 <div align="center">
 
+[![Yandex Metrika × OpenClaw Skill — обложка репозитория](./OpenClaw-Yandex-Metrika.png)](./OpenClaw-Yandex-Metrika.png)
+
 # Yandex Metrika Assistant
 
 **Навык OpenClaw + документация для API Яндекс.Метрики**
