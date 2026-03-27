@@ -1,7 +1,7 @@
 {
   "id": "yandex-metrika-assistant",
   "name": "Yandex Metrika Assistant",
-  "description": "Навык OpenClaw: API Яндекс.Метрики — отчёты stat, Logs, management, импорт. Токен и опционально счётчик по умолчанию в configSchema.",
+  "description": "Yandex Metrika Assistant — OpenClaw: API Яндекс.Метрики (stat, Logs, management, импорт, OAuth). Автоматизация аналитики и AI-агенты. Канал: https://t.me/maya_pro",
   "configSchema": {
     "type": "object",
     "additionalProperties": false,

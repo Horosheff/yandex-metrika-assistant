@@ -1,8 +1,14 @@
 # Yandex Metrika Assistant
 
-OpenClaw / агентный навык и справка по **API Яндекс.Метрики**: OAuth, отчёты `stat`, Logs, управление счётчиками, импорт данных, типовые вопросы пользователей.
+**Yandex Metrika Assistant** — OpenClaw-навык и документация для работы с **API Яндекс.Метрики** через нейросеть: OAuth-токен, отчёты (`stat/v1/data`, пресеты, сегментация), **Logs API**, управление счётчиками и целями (`management`), импорт расходов и офлайн-данных. Подходит для автоматизации аналитики, Make.com, скриптов и AI-агентов.
 
-Официальный хаб API: [yandex.ru/dev/metrika](https://yandex.ru/dev/metrika)
+**Ключевые темы:** Яндекс Метрика API, Metrica Reporting API, счётчик Метрики, визиты и просмотры, выгрузка статистики, квоты API, `api-metrika.yandex.net`, OpenClaw plugin, инструкция получения токена на русском.
+
+Официальная документация API: [yandex.ru/dev/metrika](https://yandex.ru/dev/metrika)
+
+## Telegram
+
+Материалы про **автоматизацию (в т.ч. Make.com) и нейросети** — канал [**@maya_pro**](https://t.me/maya_pro).
 
 ## Установка (OpenClaw)
 
