@@ -14,8 +14,19 @@
 
 ---
 
+## Установка для человека — начните здесь
+
+Полная пошаговая инструкция (OpenClaw → приложение OAuth → галочки Метрике → токен → **что спросить агенту после ключа**):
+
+### [docs/INSTALL-FOR-HUMANS-RU.md](./docs/INSTALL-FOR-HUMANS-RU.md)
+
+**Поддержка:** [Telegram @maya_pro](https://t.me/maya_pro) — вопросы по установке, OpenClaw, автоматизации и нейросетям.
+
+---
+
 ## Содержание
 
+- [Установка для человека](#установка-для-человека--начните-здесь)
 - [Зачем этот репозиторий](#зачем-этот-репозиторий)
 - [Кому подойдёт](#кому-подойдёт)
 - [Что умеет навык](#что-умеет-навык)
@@ -172,6 +183,7 @@ yandex-metrika-assistant/
 ├── scripts/
 │   └── exchange-yandex-oauth-code.ps1
 └── docs/
+    ├── INSTALL-FOR-HUMANS-RU.md  # Порядок установки + OAuth + TG + «с чего начать»
     ├── OPENCLAW-AGENT.md    # Для агента: HOOK.md не нужен; кавычки PowerShell
     ├── EXAMPLES.md          # Примеры curl / PowerShell
     ├── INSTRUCTION-GET-TOKEN-RU.md
@@ -205,6 +217,8 @@ yandex-metrika-assistant/
 
 | Ресурс | URL |
 |--------|-----|
+| Установка для человека | [INSTALL-FOR-HUMANS-RU.md](./docs/INSTALL-FOR-HUMANS-RU.md) |
+| Поддержка (Telegram) | [**https://t.me/maya_pro**](https://t.me/maya_pro) |
 | Документация API Метрики | https://yandex.ru/dev/metrika |
 | Примеры отчётов | https://yandex.ru/dev/metrika/ru/stat/examples |
 | Шаблоны отчётов (preset) | https://yandex.ru/dev/metrika/ru/stat/presets |

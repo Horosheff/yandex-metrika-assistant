@@ -9,6 +9,32 @@ homepage: https://github.com/Horosheff/yandex-metrika-assistant
 Плагин: **`yandex-metrika-assistant`** (`openclaw.plugin.json` в этой папке).  
 Цель: ноль сюрпризов — сначала **конфиг и секреты**, потом **правильный endpoint**, без выдуманных метрик и без утечки токена.
 
+---
+
+## Онбординг человека (порядок ответов агента)
+
+**Если токена ещё нет** (пользователь только ставит навык или не настроил ключ):
+
+1. **Сначала** дай ссылку и краткое резюме установки: **`{baseDir}/docs/INSTALL-FOR-HUMANS-RU.md`** (шаги OpenClaw + OAuth + куда вставить ключ).
+2. **Обязательно** перечисли, какие **галочки в приложении Яндекс OAuth** нужны для Метрики (таблица из того же файла / шаг 2): статистика и чтение, создание/изменение счётчиков, при необходимости расходы, параметры пользователей, офлайн-данные.
+3. Укажи **канал поддержки:** [**https://t.me/maya_pro**](https://t.me/maya_pro) — вопросы по установке и сценариям; **не** проси кидать токен в Telegram публично.
+4. Затем — получение токена: **`{baseDir}/docs/INSTRUCTION-GET-TOKEN-RU.md`** (или ссылка `authorize` с `oauthClientId` из конфига).
+5. Напомни: ключ хранить в **`oauthToken`** плагина или в **`YANDEX_METRIKA_OAUTH_TOKEN`**, не в чате.
+
+**После того как ключ добавлен** (пользователь сообщил, что сохранил токен в конфиг, или токен уже есть в конфиге/окружении):
+
+- Не проси продиктовать токен.
+- Заверши ответ блоком **«С чего начать»** — предложи **3–5 коротких вариантов** (нумерованный список), например:
+  1. Показать список счётчиков Метрики.  
+  2. Визиты по дням за последние 7 дней.  
+  3. Сводка по источникам трафика.  
+  4. Топ страниц по просмотрам.  
+  5. Конверсии по цели (если есть цели).  
+
+Полный список идей — **`{baseDir}/docs/INSTALL-FOR-HUMANS-RU.md`** (раздел «После добавления ключа») и **`{baseDir}/docs/10-user-intents-matrix.md`**.
+
+---
+
 **Типовые формулировки пользователей** («откуда трафик», «цели», «UTM», «география», «сравни периоды», «выгрузи CSV», «сырые логи») — смотри матрицу: **`{baseDir}/docs/10-user-intents-matrix.md`** (разбивка по разделам A–J + ссылки на официальные примеры и пресеты).
 
 ---
@@ -19,9 +45,7 @@ homepage: https://github.com/Horosheff/yandex-metrika-assistant
    - настроек плагина **`oauthToken`** (см. `configSchema` в `openclaw.plugin.json`), **или**
    - переменной окружения **`YANDEX_METRIKA_OAUTH_TOKEN`** (если хост OpenClaw так настроен), **или**
    - пользователь явно передал токен **один раз** для текущей сессии — тогда использовать, но **не** повторять токен обратно в ответе и **не** вставлять в файлы репозитория.
-2. Если токена **нет** — **не** вызывать API и **не** придумывать ответ Метрики. Дай пользователю:
-   - файл **`{baseDir}/docs/INSTRUCTION-GET-TOKEN-RU.md`** (человеческая выдача токена);
-   - при наличии **`oauthClientId`** в конфиге — собери ссылку `authorize?response_type=token&client_id=...` как в инструкции.
+2. Если токена **нет** — **не** вызывать API и **не** придумывать ответ Метрики. Следуй разделу **«Онбординг человека»** выше: сначала **`{baseDir}/docs/INSTALL-FOR-HUMANS-RU.md`**, галочки OAuth, [**@maya_pro**](https://t.me/maya_pro), затем **`{baseDir}/docs/INSTRUCTION-GET-TOKEN-RU.md`**; при наличии **`oauthClientId`** — ссылка `authorize?response_type=token&client_id=...`.
 3. **`defaultCounterId`** из конфига: если пользователь не назвал счётчик — используй это значение и **одной строкой** напиши: «использую счётчик по умолчанию из конфига OpenClaw».
 4. Любые `curl`/команды в чат — только с плейсхолдером **`$env:YANDEX_METRIKA_OAUTH_TOKEN`** или «подставь токен из секрета OpenClaw», **не** вставляй токен целиком.
 5. **Windows / PowerShell:** если `curl -H "Authorization: OAuth …"` даёт ошибки из‑за кавычек — используй **`Invoke-RestMethod`** с `-Headers @{ Authorization = 'OAuth ' + $env:YANDEX_METRIKA_OAUTH_TOKEN }`** или заголовок через **конкатенацию** в скобках: `-H ('Authorization: OAuth ' + $env:YANDEX_METRIKA_OAUTH_TOKEN)`. Подробно: **`{baseDir}/docs/OPENCLAW-AGENT.md`**, **`{baseDir}/docs/EXAMPLES.md`**.
@@ -187,6 +211,7 @@ curl.exe -s -G "https://api-metrika.yandex.net/stat/v1/data" `
 | Файл | Назначение |
 |------|------------|
 | `openclaw.plugin.json` | Контракт OpenClaw: `oauthToken`, `defaultCounterId`, `oauthClientId` |
+| `{baseDir}/docs/INSTALL-FOR-HUMANS-RU.md` | Установка: OpenClaw, OAuth-галочки, TG, после ключа — с чего начать |
 | `{baseDir}/docs/INSTRUCTION-GET-TOKEN-RU.md` | Токен для людей |
 | `{baseDir}/docs/OPENCLAW-AGENT.md` | Установка: нет HOOK.md; PowerShell без ловушек кавычек |
 | `{baseDir}/scripts/exchange-yandex-oauth-code.ps1` | Обмен `code` → token |
