@@ -19,6 +19,7 @@
 - [Зачем этот репозиторий](#зачем-этот-репозиторий)
 - [Кому подойдёт](#кому-подойдёт)
 - [Что умеет навык](#что-умеет-навык)
+- [Соответствие OpenClaw](#соответствие-openclaw)
 - [Быстрый старт](#быстрый-старт)
 - [Примеры применения](#примеры-применения)
 - [Примеры HTTP и PowerShell](#примеры-http-и-powershell)
@@ -82,6 +83,29 @@
 
 ---
 
+## Соответствие OpenClaw
+
+Проверено по официальным разделам [**Skills**](https://docs.openclaw.ai/tools/skills#skills) и [**Plugin manifest**](https://docs.openclaw.ai/plugins/manifest):
+
+| Требование документации | Как сделано в репозитории |
+|-------------------------|---------------------------|
+| Навык = каталог с **`SKILL.md`** и YAML frontmatter | Корень репозитория (или `skills/yandex-metrika-assistant/` в workspace) |
+| Frontmatter: **`name`**, **`description`**; парсер — однострочные значения | `description` — **одна строка**; без многострочного `>-` |
+| Пути к файлам навыка | В тексте `SKILL.md` используется **`{baseDir}/docs/...`** и **`{baseDir}/scripts/...`** ([как в доке](https://docs.openclaw.ai/tools/skills#skills)) |
+| Плагин подгружает навыки | В [`openclaw.plugin.json`](./openclaw.plugin.json) указано **`"skills": ["."]`** (корень плагина = корень навыка) |
+| `configSchema` у плагина | Задан JSON Schema для `oauthToken`, `defaultCounterId`, `oauthClientId` |
+| Подсказки UI для секретов | **`uiHints`** для полей конфига (`sensitive` для токена) |
+
+**Где класть файлы** (приоритет из [доки](https://docs.openclaw.ai/tools/skills#skills)):
+
+- Workspace агента: **`/skills/<имя>/`** — высший приоритет для своих навыков.
+- Или: **`~/.openclaw/skills`** — общие навыки на машине.
+- Плагин: после `openclaw plugins install ./yandex-metrika-assistant` навык подхватывается из манифеста, если плагин **включён** в `plugins.entries`.
+
+Альтернатива: `openclaw skills install …` — установка в активный workspace `skills/` ([ClawHub / CLI](https://docs.openclaw.ai/tools/clawhub)).
+
+---
+
 ## Быстрый старт
 
 ```mermaid
@@ -98,12 +122,11 @@ flowchart LR
    git clone https://github.com/Horosheff/yandex-metrika-assistant.git
    ```
 
-2. Зарегистрируйте плагин с id **`yandex-metrika-assistant`** — файл [`openclaw.plugin.json`](./openclaw.plugin.json).
+2. Установите плагин, например: `openclaw plugins install ./yandex-metrika-assistant` (или путь к клону), включите **`yandex-metrika-assistant`** в `plugins.entries`. В манифесте объявлено **`skills": ["."]`**, чтобы OpenClaw подгрузил этот же каталог как навык.
 
-3. В настройках плагина укажите **`oauthToken`** (токен Яндекса с правами Метрики).  
-   Опционально: **`defaultCounterId`**, **`oauthClientId`**.
+3. В конфиге плагина задайте **`oauthToken`**. Опционально: **`defaultCounterId`**, **`oauthClientId`**.
 
-4. Убедитесь, что агент подхватывает [`SKILL.md`](./SKILL.md).
+4. Перезапустите gateway при необходимости (`openclaw gateway restart`). Новая сессия агента подхватит навык из снимка skills.
 
 > **Альтернатива:** переменная окружения **`YANDEX_METRIKA_OAUTH_TOKEN`** (если ваш хост OpenClaw так устроен).
 

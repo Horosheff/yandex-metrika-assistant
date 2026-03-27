@@ -1,11 +1,7 @@
 ---
 name: yandex-metrika-assistant
-description: >-
-  OpenCLAW + Яндекс.Метрика: oauthToken, stat/v1/data, preset, сегментация filters,
-  comparison, drilldown, UTM, Директ, география, устройства, цели конверсии, ecommerce,
-  CSV, Logs, импорт расходов, management counters/goals, квоты 429. Триггеры: откуда трафик,
-  поисковые фразы, роботы, мобильные vs десктоп, вебвизор границы API, api-metrika.yandex.net,
-  plugin yandex-metrika-assistant.
+description: OpenClaw + Яндекс.Метрика API — stat/Logs/management, OAuth, presets, UTM, цели, CSV, квоты; плагин yandex-metrika-assistant.
+homepage: https://github.com/Horosheff/yandex-metrika-assistant
 ---
 
 # Яндекс.Метрика API — заточка под **OpenClaw**
@@ -13,7 +9,7 @@ description: >-
 Плагин: **`yandex-metrika-assistant`** (`openclaw.plugin.json` в этой папке).  
 Цель: ноль сюрпризов — сначала **конфиг и секреты**, потом **правильный endpoint**, без выдуманных метрик и без утечки токена.
 
-**Типовые формулировки пользователей** («откуда трафик», «цели», «UTM», «география», «сравни периоды», «выгрузи CSV», «сырые логи») — смотри матрицу: **`docs/10-user-intents-matrix.md`** (разбивка по разделам A–J + ссылки на официальные примеры и пресеты).
+**Типовые формулировки пользователей** («откуда трафик», «цели», «UTM», «география», «сравни периоды», «выгрузи CSV», «сырые логи») — смотри матрицу: **`{baseDir}/docs/10-user-intents-matrix.md`** (разбивка по разделам A–J + ссылки на официальные примеры и пресеты).
 
 ---
 
@@ -24,7 +20,7 @@ description: >-
    - переменной окружения **`YANDEX_METRIKA_OAUTH_TOKEN`** (если хост OpenClaw так настроен), **или**
    - пользователь явно передал токен **один раз** для текущей сессии — тогда использовать, но **не** повторять токен обратно в ответе и **не** вставлять в файлы репозитория.
 2. Если токена **нет** — **не** вызывать API и **не** придумывать ответ Метрики. Дай пользователю:
-   - файл **`docs/INSTRUCTION-GET-TOKEN-RU.md`** (человеческая выдача токена);
+   - файл **`{baseDir}/docs/INSTRUCTION-GET-TOKEN-RU.md`** (человеческая выдача токена);
    - при наличии **`oauthClientId`** в конфиге — собери ссылку `authorize?response_type=token&client_id=...` как в инструкции.
 3. **`defaultCounterId`** из конфига: если пользователь не назвал счётчик — используй это значение и **одной строкой** напиши: «использую счётчик по умолчанию из конфига OpenClaw».
 4. Любые `curl`/команды в чат — только с плейсхолдером **`$env:YANDEX_METRIKA_OAUTH_TOKEN`** или «подставь токен из секрета OpenClaw», **не** вставляй токен целиком.
@@ -61,7 +57,7 @@ curl.exe -s -G "https://api-metrika.yandex.net/stat/v1/data" `
 
 ### Внутренние шаги агента
 
-1. **Токен** — из `oauthToken` / `YANDEX_METRIKA_OAUTH_TOKEN`. Нет токена → стоп, ссылка на `docs/INSTRUCTION-GET-TOKEN-RU.md`.
+1. **Токен** — из `oauthToken` / `YANDEX_METRIKA_OAUTH_TOKEN`. Нет токена → стоп, ссылка на `{baseDir}/docs/INSTRUCTION-GET-TOKEN-RU.md`.
 2. **Счётчик** — если в конфиге есть **`defaultCounterId`** и пользователь не просил другой сайт, можно спросить: «использовать счётчик по умолчанию?» или сразу использовать, если контекст однозначен.
 3. Иначе: **`GET /management/v1/counters`** с **`search_string=maya`** (или фрагмент домена: `mayai`, `blog.mayai`). Если **несколько** счётчиков — перечислить `id`, `name`, `site` и **попросить выбрать** один `id`.
 4. **Период** — если не сказан, предложить по умолчанию, например **вчера − 29 дней … вчера** (без «сегодня» для стабильности данных) или уточнить у пользователя.
@@ -79,7 +75,7 @@ curl.exe -s -G "https://api-metrika.yandex.net/stat/v1/data" `
 
 - «Счётчик: **LAYMI** (`id` …), сайт **blog.mayai.ru**, период **…**. Ниже визиты по дням. Данные из API Метрики, токен из конфига OpenClaw.»
 - Далее строки вида: `2025-03-01 — визиты: 120`, …
-- Примечание при 429: «Сработала квота отчётов; повтори через несколько минут» (`docs/04-quotas.md`).
+- Примечание при 429: «Сработала квота отчётов; повтори через несколько минут» (`{baseDir}/docs/04-quotas.md`).
 
 ### Пример цепочки запросов (PowerShell, без секрета в логах чата)
 
@@ -120,7 +116,7 @@ curl.exe -s -G "https://api-metrika.yandex.net/stat/v1/data" `
 
 - `dimensions` — URL страницы на уровне хита, например **`ym:pv:URL`**.
 - `metrics` — **`ym:pv:pageviews`** (и при необходимости ещё метрики из того же множества `ym:pv:`).
-- `sort` — по убыванию просмотров, в доке Метрики для сортировки по убыванию часто используется **`-`** перед метрикой (см. `docs/05-reports-api-stat.md`).
+- `sort` — по убыванию просмотров, в доке Метрики для сортировки по убыванию часто используется **`-`** перед метрикой (см. `{baseDir}/docs/05-reports-api-stat.md`).
 - `limit` — топ **10–20** URL, чтобы ответ был читаемым.
 - `date1` / `date2` — как в других сценариях (если не заданы — default или вопрос пользователю).
 
@@ -150,14 +146,14 @@ curl.exe -s -G "https://api-metrika.yandex.net/stat/v1/data" `
 
 | Запрос пользователя | Куда | Файл |
 |---------------------|------|------|
-| Отчёт, метрики, период, сегменты | `GET .../stat/v1/data` (и др. из stat) | `docs/05-reports-api-stat.md` |
-| Топ страниц, «куда больше трафика» | `stat/v1/data`, группировка URL (`ym:pv:`) | сценарий ниже, `docs/05-reports-api-stat.md` |
-| Сырые логи, выгрузка | `management/v1/counter/{id}/logrequests...` | `docs/06-logs-api.md` |
-| Список счётчиков, цели, настройки | `management/v1/...` | `docs/08-management-quickstart.md` |
-| Загрузка расходов, CRM, офлайн | data-import | `docs/07-data-import.md` |
-| 401/403, scope | OAuth | `docs/03-auth-oauth.md`, `docs/INSTRUCTION-GET-TOKEN-RU.md` |
-| 429 | Квоты | `docs/04-quotas.md` |
-| «Что ещё спрашивают / не знаю какой отчёт» | Матрица намерений | `docs/10-user-intents-matrix.md` |
+| Отчёт, метрики, период, сегменты | `GET .../stat/v1/data` (и др. из stat) | `{baseDir}/docs/05-reports-api-stat.md` |
+| Топ страниц, «куда больше трафика» | `stat/v1/data`, группировка URL (`ym:pv:`) | сценарий ниже, `{baseDir}/docs/05-reports-api-stat.md` |
+| Сырые логи, выгрузка | `management/v1/counter/{id}/logrequests...` | `{baseDir}/docs/06-logs-api.md` |
+| Список счётчиков, цели, настройки | `management/v1/...` | `{baseDir}/docs/08-management-quickstart.md` |
+| Загрузка расходов, CRM, офлайн | data-import | `{baseDir}/docs/07-data-import.md` |
+| 401/403, scope | OAuth | `{baseDir}/docs/03-auth-oauth.md`, `{baseDir}/docs/INSTRUCTION-GET-TOKEN-RU.md` |
+| 429 | Квоты | `{baseDir}/docs/04-quotas.md` |
+| «Что ещё спрашивают / не знаю какой отчёт» | Матрица намерений | `{baseDir}/docs/10-user-intents-matrix.md` |
 
 Смешанная задача: **сначала** `counters` или `defaultCounterId`, **потом** stat/logs.
 
@@ -167,10 +163,10 @@ curl.exe -s -G "https://api-metrika.yandex.net/stat/v1/data" `
 
 - Заголовок: **`Authorization: OAuth <access_token>`** (слово `OAuth` и пробел обязательны).
 - Хост: **`https://api-metrika.yandex.net`**
-- В одном запросе **stat** не смешивать **`ym:s:`** и **`ym:pv:`** в основных `metrics`/`dimensions` (детали в `docs/05-reports-api-stat.md`).
+- В одном запросе **stat** не смешивать **`ym:s:`** и **`ym:pv:`** в основных `metrics`/`dimensions` (детали в `{baseDir}/docs/05-reports-api-stat.md`).
 - Лимиты: до **20** метрик, **10** группировок в `/stat/v1/data`; **200 запросов / 5 мин** на этот endpoint на пользователя; Logs с IP — **10**/с.
-- Имена метрик/группировок **не выдумывать** — только из официального справочника (ссылки в `docs/01-links-and-hub.md`).
-- После скачивания Logs — **`clean`**, квота хранилища **10 ГБ** на счётчик (`docs/06-logs-api.md`).
+- Имена метрик/группировок **не выдумывать** — только из официального справочника (ссылки в `{baseDir}/docs/01-links-and-hub.md`).
+- После скачивания Logs — **`clean`**, квота хранилища **10 ГБ** на счётчик (`{baseDir}/docs/06-logs-api.md`).
 
 ---
 
@@ -189,9 +185,9 @@ curl.exe -s -G "https://api-metrika.yandex.net/stat/v1/data" `
 | Файл | Назначение |
 |------|------------|
 | `openclaw.plugin.json` | Контракт OpenClaw: `oauthToken`, `defaultCounterId`, `oauthClientId` |
-| `docs/INSTRUCTION-GET-TOKEN-RU.md` | Токен для людей |
-| `scripts/exchange-yandex-oauth-code.ps1` | Обмен `code` → token |
-| `docs/01`–`09` | Справка по разделам API |
-| `docs/10-user-intents-matrix.md` | **Матрица вопросов пользователей → API** (ресёрч по примерам и пресетам) |
+| `{baseDir}/docs/INSTRUCTION-GET-TOKEN-RU.md` | Токен для людей |
+| `{baseDir}/scripts/exchange-yandex-oauth-code.ps1` | Обмен `code` → token |
+| `{baseDir}/docs/01`–`09` | Справка по разделам API |
+| `{baseDir}/docs/10-user-intents-matrix.md` | **Матрица вопросов пользователей → API** (ресёрч по примерам и пресетам) |
 
 Официальный хаб: https://yandex.ru/dev/metrika
