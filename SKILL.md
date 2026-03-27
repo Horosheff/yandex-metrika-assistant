@@ -24,6 +24,7 @@ homepage: https://github.com/Horosheff/yandex-metrika-assistant
    - при наличии **`oauthClientId`** в конфиге — собери ссылку `authorize?response_type=token&client_id=...` как в инструкции.
 3. **`defaultCounterId`** из конфига: если пользователь не назвал счётчик — используй это значение и **одной строкой** напиши: «использую счётчик по умолчанию из конфига OpenClaw».
 4. Любые `curl`/команды в чат — только с плейсхолдером **`$env:YANDEX_METRIKA_OAUTH_TOKEN`** или «подставь токен из секрета OpenClaw», **не** вставляй токен целиком.
+5. **Windows / PowerShell:** если `curl -H "Authorization: OAuth …"` даёт ошибки из‑за кавычек — используй **`Invoke-RestMethod`** с `-Headers @{ Authorization = 'OAuth ' + $env:YANDEX_METRIKA_OAUTH_TOKEN }`** или заголовок через **конкатенацию** в скобках: `-H ('Authorization: OAuth ' + $env:YANDEX_METRIKA_OAUTH_TOKEN)`. Подробно: **`{baseDir}/docs/OPENCLAW-AGENT.md`**, **`{baseDir}/docs/EXAMPLES.md`**.
 
 ---
 
@@ -34,7 +35,8 @@ homepage: https://github.com/Horosheff/yandex-metrika-assistant
 ```powershell
 $env:YANDEX_METRIKA_OAUTH_TOKEN = "<секрет, не коммитить>"
 $cid = "<COUNTER_ID>"
-curl.exe -s -H "Authorization: OAuth $env:YANDEX_METRIKA_OAUTH_TOKEN" `
+# Надёжнее без вложенных кавычек вокруг токена:
+curl.exe -s -H ('Authorization: OAuth ' + $env:YANDEX_METRIKA_OAUTH_TOKEN) `
   "https://api-metrika.yandex.net/management/v1/counters?per_page=20"
 ```
 
@@ -46,7 +48,7 @@ curl.exe -s -G "https://api-metrika.yandex.net/stat/v1/data" `
   --data-urlencode "metrics=ym:s:visits" `
   --data-urlencode "date1=7daysAgo" `
   --data-urlencode "date2=yesterday" `
-  -H "Authorization: OAuth $env:YANDEX_METRIKA_OAUTH_TOKEN"
+  -H ('Authorization: OAuth ' + $env:YANDEX_METRIKA_OAUTH_TOKEN)
 ```
 
 ---
@@ -84,7 +86,7 @@ curl.exe -s -G "https://api-metrika.yandex.net/stat/v1/data" `
 curl.exe -s -G "https://api-metrika.yandex.net/management/v1/counters" `
   --data-urlencode "search_string=maya" `
   --data-urlencode "per_page=50" `
-  -H "Authorization: OAuth $env:YANDEX_METRIKA_OAUTH_TOKEN"
+  -H ('Authorization: OAuth ' + $env:YANDEX_METRIKA_OAUTH_TOKEN)
 
 # 2) Ежедневные визиты (подставь $cid из шага 1)
 curl.exe -s -G "https://api-metrika.yandex.net/stat/v1/data" `
@@ -94,7 +96,7 @@ curl.exe -s -G "https://api-metrika.yandex.net/stat/v1/data" `
   --data-urlencode "date1=30daysAgo" `
   --data-urlencode "date2=yesterday" `
   --data-urlencode "sort=ym:s:date" `
-  -H "Authorization: OAuth $env:YANDEX_METRIKA_OAUTH_TOKEN"
+  -H ('Authorization: OAuth ' + $env:YANDEX_METRIKA_OAUTH_TOKEN)
 ```
 
 Точные **`metrics`/`dimensions`** при спорных отчётах — только из официальной доки, не по памяти модели.
@@ -135,7 +137,7 @@ curl.exe -s -G "https://api-metrika.yandex.net/stat/v1/data" `
   --data-urlencode "limit=15" `
   --data-urlencode "date1=30daysAgo" `
   --data-urlencode "date2=yesterday" `
-  -H "Authorization: OAuth $env:YANDEX_METRIKA_OAUTH_TOKEN"
+  -H ('Authorization: OAuth ' + $env:YANDEX_METRIKA_OAUTH_TOKEN)
 ```
 
 Если API вернёт ошибку совместимости группировки и метрики — не «угадывать» замену, а свериться с актуальным openapi для `/stat/v1/data` на сайте Метрики.
@@ -186,6 +188,7 @@ curl.exe -s -G "https://api-metrika.yandex.net/stat/v1/data" `
 |------|------------|
 | `openclaw.plugin.json` | Контракт OpenClaw: `oauthToken`, `defaultCounterId`, `oauthClientId` |
 | `{baseDir}/docs/INSTRUCTION-GET-TOKEN-RU.md` | Токен для людей |
+| `{baseDir}/docs/OPENCLAW-AGENT.md` | Установка: нет HOOK.md; PowerShell без ловушек кавычек |
 | `{baseDir}/scripts/exchange-yandex-oauth-code.ps1` | Обмен `code` → token |
 | `{baseDir}/docs/01`–`09` | Справка по разделам API |
 | `{baseDir}/docs/10-user-intents-matrix.md` | **Матрица вопросов пользователей → API** (ресёрч по примерам и пресетам) |

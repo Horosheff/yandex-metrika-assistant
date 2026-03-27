@@ -172,6 +172,7 @@ yandex-metrika-assistant/
 ├── scripts/
 │   └── exchange-yandex-oauth-code.ps1
 └── docs/
+    ├── OPENCLAW-AGENT.md    # Для агента: HOOK.md не нужен; кавычки PowerShell
     ├── EXAMPLES.md          # Примеры curl / PowerShell
     ├── INSTRUCTION-GET-TOKEN-RU.md
     ├── 10-user-intents-matrix.md

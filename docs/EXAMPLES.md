@@ -15,6 +15,23 @@ $cid = "99223440"   # подставьте свой counter id
 Authorization: OAuth <access_token>
 ```
 
+### PowerShell: если «ломаются кавычки» с curl
+
+Не вставляйте токен из чата в середину строки с кавычками. Задайте **`$env:YANDEX_METRIKA_OAUTH_TOKEN`** отдельно (из секрета), затем:
+
+```powershell
+$h = @{ Authorization = 'OAuth ' + $env:YANDEX_METRIKA_OAUTH_TOKEN }
+Invoke-RestMethod -Uri 'https://api-metrika.yandex.net/management/v1/counters?per_page=10' -Headers $h
+```
+
+Или одна строка **curl** без вложенных кавычек вокруг токена:
+
+```powershell
+curl.exe -s -H ('Authorization: OAuth ' + $env:YANDEX_METRIKA_OAUTH_TOKEN) 'https://api-metrika.yandex.net/management/v1/counters?per_page=10'
+```
+
+Для агента OpenClaw: см. также [`OPENCLAW-AGENT.md`](./OPENCLAW-AGENT.md).
+
 ---
 
 ## 1. Список доступных счётчиков
